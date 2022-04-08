@@ -7,6 +7,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { auth } from "../../Firebase/Firebase.init";
+import toast from "react-hot-toast";
 
 const provider = new GoogleAuthProvider();
 
@@ -18,9 +19,6 @@ const Signup = () => {
     value: "",
     error: "",
   });
-  console.log(email);
-  // console.log(password);
-  // console.log(confirmPassword);
 
   const googleAuth = () => {
     signInWithPopup(auth, provider)
@@ -77,11 +75,16 @@ const Signup = () => {
       createUserWithEmailAndPassword(auth, email.value, password.value)
         .then((userCredential) => {
           const user = userCredential.user;
-          console.log(user);
+          toast.success("User Created Successfully", { id: "success" });
+          navigate("/");
         })
         .catch((error) => {
           const errorMessage = error.message;
-          console.log(errorMessage);
+          if (errorMessage.includes("email-already-in-use")) {
+            toast.error("Already Exist", { id: "error" });
+          } else {
+            toast.error(errorMessage, { id: "error2" });
+          }
         });
     }
   };
